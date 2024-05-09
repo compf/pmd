@@ -1,12 +1,8 @@
-/**
- * BSD-style license; for more info see http://pmd.sourceforge.net/license.html
- */
 
 package net.sourceforge.pmd.cache.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.sourceforge.pmd.lang.rule.Rule;
 import net.sourceforge.pmd.lang.rule.internal.RuleSets;
 
@@ -24,8 +20,8 @@ class CachedRuleMapper {
      * @param languageName The terse name of the language for which the rule applies
      * @return The requested rule
      */
-    public Rule getRuleForClass(final String className, final String ruleName, final String languageName) {
-        return cachedRulesInstances.get(getRuleKey(className, ruleName, languageName));
+    public Rule getRuleForClass(final RuleKey ruleKey) {
+        return cachedRulesInstances.get(ruleKey.toString());
     }
 
     /**
@@ -38,7 +34,24 @@ class CachedRuleMapper {
         }
     }
 
-    private String getRuleKey(final String className, final String ruleName, final String languageName) {
-        return className + "$$" + ruleName + "$$" + languageName;
+    private class RuleKey {
+        private final String className;
+        private final String ruleName;
+        private final String languageName;
+
+        public RuleKey(String className, String ruleName, String languageName) {
+            this.className = className;
+            this.ruleName = ruleName;
+            this.languageName = languageName;
+        }
+
+        @Override
+        public String toString() {
+            return className + "$$" + ruleName + "$$" + languageName;
+        }
+    }
+
+    private RuleKey getRuleKey(final String className, final String ruleName, final String languageName) {
+        return new RuleKey(className, ruleName, languageName);
     }
 }
